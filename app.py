@@ -30,7 +30,6 @@ try:
       _f.write(_CFG)
 except Exception:
   pass
-
 for _k, _v in [('base', 'light'), ('primaryColor', '#1D4ED8'),
                ('backgroundColor', '#F4F6FA'),
                ('secondaryBackgroundColor', '#E8EEF7'),
@@ -41,7 +40,10 @@ for _k, _v in [('base', 'light'), ('primaryColor', '#1D4ED8'),
     pass
 
 
-# ธีมสี
+
+# ==============================================================================
+# ธีมสี (น้ำเงิน อ่านง่าย)
+# ==============================================================================
 T = dict(
     bg='#F4F6FA', card='#FFFFFF', side='#E8EEF7', text='#0F172A', muted='#475569',
     primary='#1D4ED8', accent='#D97706', border='#CBD5E1',
@@ -51,17 +53,12 @@ T = dict(
 
 CSS = Template("""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap&#39;);
+@import url('https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap');
 html, body, .stApp, button, input, textarea {font-family:'Prompt',sans-serif;}
 .stApp {background:$bg;}
 [data-testid="stHeader"] {background:transparent;}
 [data-testid="stSidebar"] {background:$side;}
-[data-testid="stMainBlockContainer"], .block-container {
-  padding:4.25rem clamp(1rem, 4vw, 3.5rem) 3rem; max-width:1440px;
-}
-[data-testid="stSidebar"] [data-testid="stSidebarUserContent"] {padding-top:2.75rem;}
-[data-testid="stSidebar"] label {font-weight:600;}
-
+.block-container {padding-top:1.5rem; max-width:1400px;}
 .hero {background:$hero; border-radius:16px; padding:22px 30px; margin-bottom:18px;}
 .hero h1 {margin:0; font-size:1.7rem; color:#FFFFFF !important; font-weight:600;}
 .hero p {margin:4px 0 0; color:#DBEAFE !important; font-weight:300;}
@@ -100,37 +97,6 @@ html, body, .stApp, button, input, textarea {font-family:'Prompt',sans-serif;}
   border:1px solid $primary;}
 .stButton>button[kind="primary"] {background:$primary !important; color:#FFFFFF !important;}
 .hero h1, .hero p {color:#FFFFFF !important;}
-
-.hero {padding:clamp(1.5rem, 4vw, 3rem); border-radius:22px; margin:0;}
-.hero h1 {font-size:clamp(1.55rem, 4vw, 2.6rem); line-height:1.18; padding:0;}
-.hero p {margin:0 0 .65rem; color:#DBEAFE !important; font-weight:500;}
-.hero .hero-meta {margin:.75rem 0 0; font-size:.88rem; font-weight:400;}
-.section-heading {font-size:1.15rem; font-weight:600; color:$text; margin:.65rem 0 0;}
-.kpi, .ins {border-color:#DCE4EF; box-shadow:0 3px 10px #0F172A08;}
-.kpi {min-height:142px; padding:1rem; border-top:3px solid #2563EB;}
-.kpi-ic {display:inline-grid; place-items:center; border-radius:9px; width:2rem; height:2rem;
-  margin-bottom:.45rem; background:#EFF6FF; font-size:1rem;}
-.kpi-v, .ins .v {overflow-wrap:anywhere; font-variant-numeric:tabular-nums;}
-.kpi-v {font-size:clamp(1.05rem, 1.7vw, 1.6rem); margin:.18rem 0 .3rem;}
-.chip {display:inline-block;}
-.ins {min-height:105px; padding:.85rem 1rem;}
-.ins .v {margin:.15rem 0;}
-.sec {font-size:1.03rem; line-height:1.4;}
-.sec-c {line-height:1.5;}
-.stTabs [data-baseweb="tab-list"] {overflow-x:auto; background:#E8EEF7; padding:.2rem .45rem 0;
-  border-radius:12px; gap:.25rem;}
-.stTabs [data-baseweb="tab"] {flex-shrink:0; padding:.55rem .85rem;}
-.stTabs [data-baseweb="tab-panel"] {padding-top:.85rem;}
-.st-key-sales_metrics [data-testid="stHorizontalBlock"] {flex-wrap:wrap;}
-.st-key-sales_metrics [data-testid="stColumn"] {flex:1 1 10rem; min-width:0;}
-.st-key-sales_highlights [data-testid="stHorizontalBlock"] {flex-wrap:wrap;}
-.st-key-sales_highlights [data-testid="stColumn"] {flex:1 1 12rem; min-width:0;}
-@media (max-width:640px) {
-  .st-key-sales_metrics [data-testid="stColumn"] {flex-basis:42%; width:auto;}
-  .st-key-sales_highlights [data-testid="stColumn"] {flex-basis:100%; width:100%;}
-  .kpi {min-height:130px; padding:.75rem;}
-  .chip {font-size:.72rem; padding:2px 6px;}
-}
 </style>
 """)
 st.markdown(CSS.safe_substitute(T), unsafe_allow_html=True)
@@ -140,12 +106,12 @@ def style_fig(fig, h=340):
   fig.update_layout(
       paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
       font=dict(family='Prompt, sans-serif', color=T['text']),
-      colorway=T['palette'], height=h, margin=dict(l=16, r=20, t=18, b=16),
+      colorway=T['palette'], height=h, margin=dict(l=10, r=10, t=10, b=10),
       legend_title_text='',
   )
   grid = 'rgba(128,128,128,.18)'
-  fig.update_xaxes(gridcolor=grid, zeroline=False, automargin=True)
-  fig.update_yaxes(gridcolor=grid, zeroline=False, automargin=True)
+  fig.update_xaxes(gridcolor=grid, zeroline=False)
+  fig.update_yaxes(gridcolor=grid, zeroline=False)
   return fig
 
 
@@ -175,7 +141,9 @@ def pct(curr, prev):
   return None if prev == 0 else (curr - prev) / prev * 100
 
 
-# เข้าสู่ระบบ
+# ==============================================================================
+# Login
+# ==============================================================================
 def get_users():
   try:
     return dict(st.secrets['users'])
@@ -205,7 +173,9 @@ if not st.session_state.authenticated:
   st.stop()
 
 
-# อ่านข้อมูล
+# ==============================================================================
+# Data
+# ==============================================================================
 @st.cache_data
 def load_data():
   data = pd.read_csv('clean_cafe_sales.csv')
@@ -237,7 +207,9 @@ def logout():
   st.session_state.authenticated = False
 
 
-# ตัวกรอง
+# ==============================================================================
+# Sidebar
+# ==============================================================================
 st.sidebar.header('🔍 ตัวกรองข้อมูล')
 
 min_date, max_date = df['วันที่'].min().date(), df['วันที่'].max().date()
@@ -254,11 +226,11 @@ def reset_filters():
                           cat_filter=all_c, pay_filter=all_p, page='overview')
 
 
-date_range = st.sidebar.date_input('ช่วงวันที่', key='date_filter',
+date_range = st.sidebar.date_input('1. ช่วงวันที่', key='date_filter',
                                    min_value=min_date, max_value=max_date)
-sel_b = st.sidebar.multiselect('สาขา', all_b, key='branch_filter')
-sel_c = st.sidebar.multiselect('หมวดหมู่สินค้า', all_c, key='cat_filter')
-sel_p = st.sidebar.multiselect('ช่องทางชำระเงิน', all_p, key='pay_filter')
+sel_b = st.sidebar.multiselect('2. สาขา', all_b, key='branch_filter')
+sel_c = st.sidebar.multiselect('3. หมวดหมู่สินค้า', all_c, key='cat_filter')
+sel_p = st.sidebar.multiselect('4. ช่องทางชำระเงิน', all_p, key='pay_filter')
 st.sidebar.markdown('---')
 st.sidebar.button('🔄 รีเซ็ตตัวกรอง', on_click=reset_filters, use_container_width=True)
 st.sidebar.button('🚪 ออกจากระบบ', on_click=logout, use_container_width=True)
@@ -280,30 +252,16 @@ if isinstance(date_range, (tuple, list)) and len(date_range) == 2:
 else:
   filtered_df, prev_df = apply_filters(df), pd.DataFrame(columns=df.columns)
 
+# ==============================================================================
+# Hero
+# ==============================================================================
+crumb = '🏠 ภาพรวม' if st.session_state.page == 'overview' else '🏠 ภาพรวม › 📋 รายละเอียดเชิงลึก'
+st.markdown(f'<div class="hero"><h1>☕ Café & Bakery Analytics</h1>'
+            f'<p>Executive Dashboard — {crumb}</p></div>', unsafe_allow_html=True)
 
-# หัวหน้าแดชบอร์ดและปุ่มนำทาง
-is_overview = st.session_state.page == 'overview'
-page_label = 'ภาพรวมยอดขาย' if is_overview else 'รายละเอียดรายบิล'
-if isinstance(date_range, (tuple, list)) and len(date_range) == 2:
-  period = f'{s:%d/%m/%Y} – {e:%d/%m/%Y}'
-else:
-  period = 'ทุกวันที่มีข้อมูล'
-
-st.markdown(
-    f'<div class="hero"><p>{page_label}</p><h1>Café &amp; Bakery Analytics</h1>'
-    f'<p class="hero-meta">ช่วงวันที่ {period} · {len(filtered_df):,} รายการขาย</p></div>',
-    unsafe_allow_html=True,
-)
-
-nav, coverage = st.columns([2, 3], vertical_alignment='center')
-if is_overview and not filtered_df.empty:
-  nav.button('ดูรายละเอียดรายบิล →', on_click=go_detail, type='primary')
-elif not is_overview:
-  nav.button('← กลับหน้าภาพรวม', on_click=go_home)
-coverage.caption(f'ข้อมูลทั้งหมด {len(df):,} รายการ · {min_date:%d/%m/%Y} – {max_date:%d/%m/%Y}')
-
-
-# ภาพรวม
+# ==============================================================================
+# Overview
+# ==============================================================================
 if st.session_state.page == 'overview':
   if filtered_df.empty:
     st.warning('⚠️ **ไม่พบข้อมูลที่ตรงกับเงื่อนไขตัวกรอง**')
@@ -320,26 +278,24 @@ if st.session_state.page == 'overview':
     p_qty = prev_df['จำนวน'].sum() if hp else 0
     p_aov = p_rev / p_ord if p_ord else 0
 
-    st.markdown('<h2 class="section-heading">ตัวชี้วัดยอดขาย</h2>', unsafe_allow_html=True)
-    with st.container(key='sales_metrics'):
-      c1, c2, c3, c4 = st.columns(4)
-      kpi(c1, '💰', 'ยอดขายรวม', f'{rev:,.0f} บาท', pct(rev, p_rev) if hp else None)
-      kpi(c2, '🛒', 'จำนวนคำสั่งซื้อ', f'{orders:,} ออร์เดอร์', pct(orders, p_ord) if hp else None)
-      kpi(c3, '📦', 'สินค้าที่ขายได้', f'{qty:,} หน่วย', pct(qty, p_qty) if hp else None)
-      kpi(c4, '🧾', 'ยอดเฉลี่ยต่อบิล', f'{aov:,.2f} บาท', pct(aov, p_aov) if hp else None)
+    c1, c2, c3, c4 = st.columns(4)
+    kpi(c1, '💰', 'ยอดขายรวม', f'{rev:,.0f} บาท', pct(rev, p_rev) if hp else None)
+    kpi(c2, '🛒', 'จำนวนคำสั่งซื้อ', f'{orders:,} ออร์เดอร์', pct(orders, p_ord) if hp else None)
+    kpi(c3, '📦', 'สินค้าที่ขายได้', f'{qty:,} หน่วย', pct(qty, p_qty) if hp else None)
+    kpi(c4, '🧾', 'ยอดเฉลี่ยต่อบิล', f'{aov:,.2f} บาท', pct(aov, p_aov) if hp else None)
+    st.write('')
 
     by_b = filtered_df.groupby('สาขา')['ยอดรวม'].sum()
     by_m = filtered_df.groupby('ชื่อเมนู')['ยอดรวม'].sum()
     by_p = filtered_df.groupby('ช่องทางชำระเงิน')['ยอดรวม'].sum()
     tm = by_m.idxmax()
     tm_q = filtered_df.groupby('ชื่อเมนู')['จำนวน'].sum()[tm]
-    st.markdown('<h2 class="section-heading">ไฮไลต์ยอดขาย</h2>', unsafe_allow_html=True)
-    with st.container(key='sales_highlights'):
-      i1, i2, i3 = st.columns(3)
-      insight(i1, '🏆 สาขาทำเงินสูงสุด', by_b.idxmax(), f'ยอดรวม {by_b.max():,.0f} บาท')
-      insight(i2, '⭐ เมนูอันดับ 1', tm, f'ขายได้ {tm_q:,} หน่วย')
-      insight(i3, '💳 ช่องทางชำระเงินหลัก', by_p.idxmax(),
-              f'{by_p.max() / rev * 100:.1f}% ของยอดขาย')
+    i1, i2, i3 = st.columns(3)
+    insight(i1, '🏆 สาขาทำเงินสูงสุด', by_b.idxmax(), f'ยอดรวม {by_b.max():,.0f} บาท')
+    insight(i2, '⭐ เมนูอันดับ 1', tm, f'ขายได้ {tm_q:,} หน่วย')
+    insight(i3, '💳 ช่องทางชำระเงินหลัก', by_p.idxmax(),
+            f'{by_p.max() / rev * 100:.1f}% ของยอดขาย')
+    st.write('')
 
     daily = filtered_df.groupby('วันที่')['ยอดรวม'].sum().reset_index()
     if len(daily) >= 3:
@@ -354,28 +310,25 @@ if st.session_state.page == 'overview':
           st.success(f'🎉 ยอดขายวันล่าสุด ({dt}) สูงกว่าค่าเฉลี่ยรายวัน {d:.1f}%')
 
     t1, t2, t3, t4 = st.tabs([
-        'สาขาและการชำระเงิน', 'เมนูและการกระจาย', 'แนวโน้มและพยากรณ์',
-        'พจนานุกรมและคุณภาพข้อมูล'
+        '📊 ภาพรวม', '☕ เมนู & การกระจาย', '📈 แนวโน้ม & พยากรณ์',
+        '🗂️ Data Dictionary & คุณภาพข้อมูล'
     ])
 
     with t1:
-      with st.container(border=True):
+      a, b = st.columns([3, 2])
+      with a, st.container(border=True):
         section('ยอดขายแยกตามสาขา', 'เปรียบเทียบยอดขายรวม (บาท)')
         f = px.bar(by_b.reset_index(), x='สาขา', y='ยอดรวม', color='สาขา',
                    text_auto=',.0f', color_discrete_sequence=T['palette'])
         f.update_layout(showlegend=False)
         st.plotly_chart(style_fig(f), use_container_width=True)
-
-      a, b = st.columns([2, 3])
-      with a, st.container(border=True):
+      with b, st.container(border=True):
         section('ช่องทางชำระเงิน', 'สัดส่วนตามยอดขาย')
         f = px.pie(by_p.reset_index(), values='ยอดรวม', names='ช่องทางชำระเงิน',
                    hole=0.55, color_discrete_sequence=T['palette'])
-        f.update_traces(textposition='inside', textinfo='percent')
-        f.update_layout(legend=dict(orientation='h', y=-0.06, x=0.5, xanchor='center'))
+        f.update_traces(textposition='inside', textinfo='percent+label')
         st.plotly_chart(style_fig(f), use_container_width=True)
-
-      with b, st.container(border=True):
+      with st.container(border=True):
         section('ยอดขายตามวันในสัปดาห์', 'วางแผนสต็อกและตารางพนักงาน')
         days = ['จันทร์', 'อังคาร', 'พุธ', 'พฤหัสบดี', 'ศุกร์', 'เสาร์', 'อาทิตย์']
         wd = (filtered_df.assign(dow=filtered_df['วันที่'].dt.dayofweek)
@@ -401,7 +354,6 @@ if st.session_state.page == 'overview':
                    color_discrete_sequence=[T['primary']])
         f.update_layout(yaxis={'categoryorder': 'total ascending'})
         st.plotly_chart(style_fig(f), use_container_width=True)
-
       with b, st.container(border=True):
         section('5 เมนูยอดขายต่ำสุด', 'ควรพิจารณาโปรโมชันหรือปรับปรุง')
         f = px.bar(mdf.sort_values('ยอดรวม').head(5), x='ยอดรวม', y='ชื่อเมนู',
@@ -418,7 +370,6 @@ if st.session_state.page == 'overview':
                    color_discrete_sequence=T['palette'])
         f.update_layout(showlegend=False)
         st.plotly_chart(style_fig(f, 300), use_container_width=True)
-
       with d2, st.container(border=True):
         section('การกระจายยอดซื้อต่อรายการ (Histogram)',
                 'ดูช่วงราคาที่ลูกค้าซื้อบ่อยที่สุด')
@@ -450,7 +401,6 @@ if st.session_state.page == 'overview':
         f = px.line(dd, x='วันที่', y=['ยอดรวม', 'เฉลี่ย 7 วัน'], markers=True)
         f.data[1].update(line=dict(dash='dash', width=3), mode='lines')
         st.plotly_chart(style_fig(f, 360), use_container_width=True)
-
       with st.container(border=True):
         section('พยากรณ์ยอดขาย 7 วันข้างหน้า', 'Linear Regression อย่างง่าย (ประมาณการเบื้องต้น)')
         idx = pd.date_range(daily['วันที่'].min(), daily['วันที่'].max())
@@ -503,8 +453,16 @@ if st.session_state.page == 'overview':
             '- **Vectorized Filtering:** ใช้การกรองแบบเวกเตอร์ของ Pandas ตอบสนองการคลิกภายในเสี้ยววินาที\n'
             '- **Data Pipeline:** แยกสคริปต์ทำความสะอาดข้อมูลออกจากส่วนแสดงผล เพื่อลดภาระการประมวลผลหน้าเว็บ')
 
-# รายละเอียดรายบิล
+    st.write('')
+    c_act, c_meta = st.columns([2, 3])
+    c_act.button('📋 ดูรายละเอียดรายบิลและส่งออกรายงาน ➡️', on_click=go_detail, type='primary')
+    c_meta.caption(f'🕒 ขอบเขตข้อมูล: **{min_date}** ถึง **{max_date}** | ข้อมูลทั้งหมด **{len(df):,}** รายการ')
+
+# ==============================================================================
+# Detail
+# ==============================================================================
 else:
+  st.button('⬅️ กลับหน้าหลัก (Overview)', on_click=go_home)
   with st.container(border=True):
     section('📋 ตารางรายละเอียดการขายเชิงลึก', 'ค้นหา เรียงลำดับ และดาวน์โหลดไปใช้งานต่อ')
     q = st.text_input('🔎 ค้นหา (ชื่อเมนู, รหัสคำสั่งซื้อ, สาขา)', '')
@@ -519,7 +477,7 @@ else:
       st.caption(f'พบ {len(disp):,} รายการ')
       st.dataframe(disp, use_container_width=True, height=430)
 
-    b1, b2 = st.columns(2)
+    b1, b2, b3 = st.columns([1, 1, 3])
     b1.download_button('📥 CSV', disp.to_csv(index=False).encode('utf-8-sig'),
                        'cafe_sales_detail.csv', 'text/csv', use_container_width=True)
     try:
@@ -531,19 +489,22 @@ else:
                          use_container_width=True)
     except ImportError:
       b2.caption('ติดตั้ง openpyxl เพื่อโหลด Excel')
-
-
+    b3.button('🏠 กลับหน้าภาพรวม', on_click=go_home)
+    
 with st.expander("📋 รายงานการตรวจสอบและทำความสะอาดข้อมูล (Data Cleaning Report)"):
-  st.markdown("""
-  - **ไฟล์ที่แดชบอร์ดใช้:** `clean_cafe_sales.csv`
-  - **การจัดการค่าว่าง (Missing Values):** ตรวจพบและคัดกรองแถวที่ไม่มีวันที่หรือยอดขายออก (`dropna`)
-  - **การตรวจสอบข้อมูลซ้ำ (Duplicates):** ตรวจสอบและกำจัดแถวที่ซ้ำซ้อนออก เรียบร้อย
-  - **ผลกระทบต่อยอดขาย:** คงความถูกต้องของยอดขายรวมสุทธิ (Net Sales) ไม่มีค่าติดลบหรือหน่วยผิดเพี้ยน
-  """)
+    st.markdown("""
+    - **สถานะข้อมูลดิบ (Raw Data):** โหลดไฟล์ `clean_sales_data.csv`
+    - **การจัดการค่าว่าง (Missing Values):** ตรวจพบและคัดกรองแถวที่ไม่มีวันที่หรือยอดขายออก (`dropna`) 
+    - **การตรวจสอบข้อมูลซ้ำ (Duplicates):** ตรวจสอบและกำจัดแถวที่ซ้ำซ้อนออก เรียบร้อย
+    - **ผลกระทบต่อยอดขาย:** คงความถูกต้องของยอดขายรวมสุทธิ (Net Sales) ไม่มีค่าติดลบหรือหน่วยผิดเพี้ยน
+    """)
+    
+import io
 
+# สมมติว่าตารางข้อมูลที่ผ่านการกรองแล้วของคุณชื่อ filtered_df
 buffer = io.BytesIO()
 with pd.ExcelWriter(buffer, engine='openpyxl') as writer:
-  filtered_df.to_excel(writer, index=False, sheet_name="Sales_Data")
+    filtered_df.to_excel(writer, index=False, sheet_name="Sales_Data")
 
 st.download_button(
     label="⬇️ ดาวน์โหลดรายงาน Excel",
